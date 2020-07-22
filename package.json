@@ -1,0 +1,23 @@
+{
+  "name": "io.strem.rutracker.addon",
+  "version": "0.0.1",
+  "description": "Rutracker integration for the Stremio. It should solve lack of russian voiced content.",
+  "main": "addon.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyckyta/stremio-rutracker-addon.git"
+  },
+  "keywords": [
+    "stremio",
+    "rutracker"
+  ],
+  "author": "nyckyta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nyckyta/stremio-rutracker-addon/issues"
+  },
+  "homepage": "https://github.com/nyckyta/stremio-rutracker-addon#readme"
+}
