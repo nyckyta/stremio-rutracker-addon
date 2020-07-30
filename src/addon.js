@@ -17,9 +17,13 @@ const builder = new addonBuilder({
     idPrefixes: ["tt"]
     
 });
-
+//TODO: test, CI/CD
 builder.defineStreamHandler(function(args) {
     if (args.type === 'movie') {
-        return Promise.resolve({streams: rutrackerStreamProviderService.getStreamsById(args.id)})
+        return rutrackerStreamProviderService.getStreamsById(args.id).then(res => {stream: res})
     }
+
+    return Promise.resolve({stream: []})
 })
+
+serveHTTP(builder.getInterface(), 8081)
