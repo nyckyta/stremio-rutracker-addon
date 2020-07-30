@@ -25,7 +25,6 @@ const appropriateCategories = [
 class RutrackerStreamProviderService {
 
     constructor() {
-        super();
         this.host = "https://v3-cinemeta.strem.io"
         this.api = new RutrackerApi();
     }
@@ -34,20 +33,33 @@ class RutrackerStreamProviderService {
     getStreamsById(id) {
         return axios.get(`${this.host}/meta/movie/${id}.json`)
             .then(body => this.api.login({username: rutrackerUsername, password: rutrackerPassword})
-                .then(() => this.api.search({query: `${body.meta.name} ${body.meta.releaseInfo}`})
-                .then(torrents => torrents.filter(torrent => torrent.state === "проверено")) //ignore any unchecked tracks
-                .then(torrents => torrents.filter(torrent => appropriateCategories.includes(torrent.category)))
-                .then(torrents => torrents.map(torrent => torrent.id))
-                .then(torrentsIds => torrentsIds.map(torrentId => this.api.getMagnetLink(torrentId)
-                    .then(magnetLink => this.retrieveTorrentInfoHash(magnetLink))))
-                )
-            )
-        }
+                .then(() => this.api.search({query: `${body.data.meta.name} ${body.data.meta.releaseInfo}`})
+                .then(torrents => this.mapValidTorrentsToTheirRutrackerId(torrents))
+                .then(torrentsIds => this.retrieveMagnetLinksByIds(torrentsIds)))
+            )   
+    }
+
+    /**In this case torrents is list of "Torrent" i.e. list of rutracker-api entity. 
+        See https://github.com/nikityy/rutracker-api/blob/master/lib/torrent.js */
+    mapValidTorrentsToTheirRutrackerId(torrents) {
+        return torrents.filter(torrent => this.isTorrentValid(torrent)).map(torrent => torrent.id)
+    }
+
+    /**torrent is valid only if his chekced state and torrent's category in list of valid categories */
+    isTorrentValid(torrent) {
+        return torrent.state === "проверено" && appropriateCategories.includes(torrent.category)
+    }
+    
+    /** ids - list of tracks id from rutracker */
+    retrieveMagnetLinksByIds(ids) {
+        return Promise.all(ids.map(trackId => this.api.getMagnetLink(trackId)
+            .then(magnetLink => this.retrieveTorrentInfoHash(magnetLink))
+        ))
+    }
 
     retrieveTorrentInfoHash(magnetLink) {
         return magnetLink.substring(20, 60) //hash-info substring from magnet link 
     }
-
 
 }
 
