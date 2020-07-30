@@ -7,7 +7,7 @@ const rutrackerPassword = process.env.RUTRACKER_PASSWORD || "password";
 
 //list of appropriate categories for tracks. 
 //It's required because tracks also could distribute music, images or whatever, but we need only films and series. 
-const appropriateCategories = [
+const validCategories = [
     "Фильмы до 1990 года",
     "Фильмы 1991-2000",
     "Фильмы 2001-2005",
@@ -19,7 +19,12 @@ const appropriateCategories = [
     "Азиатские фильмы",
     "Индийское кино",
     "Короткий метр",
-    "Грайндхаус"
+    "Грайндхаус",
+    "Классика мирового кинематографа (HD Video)",
+    "Классика мирового кинематографа",
+    "Фильмы HD для Apple TV",
+    "Видео для смартфонов и КПК",
+    "Фильмы для iPod, iPhone, iPad"
 ]
 
 class RutrackerStreamProviderService {
@@ -47,7 +52,7 @@ class RutrackerStreamProviderService {
 
     /**torrent is valid only if his chekced state and torrent's category in list of valid categories */
     isTorrentValid(torrent) {
-        return torrent.state === "проверено" && appropriateCategories.includes(torrent.category)
+        return torrent.state === "проверено" && validCategories.includes(torrent.category)
     }
     
     /** ids - list of tracks id from rutracker */
