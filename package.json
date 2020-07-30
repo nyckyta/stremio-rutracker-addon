@@ -4,6 +4,7 @@
   "description": "Rutracker integration for the Stremio. It should solve lack of russian voiced content.",
   "main": "addon.js",
   "scripts": {
+    "start": "node src/addon.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
