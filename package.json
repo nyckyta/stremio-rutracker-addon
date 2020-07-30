@@ -22,6 +22,7 @@
   "homepage": "https://github.com/nyckyta/stremio-rutracker-addon#readme",
   "dependencies": {
     "axios": "^0.19.2",
-    "rutracker-api": "^1.1.2"
+    "rutracker-api": "^1.1.2",
+    "stremio-addon-sdk": "^1.6.2"
   }
 }
