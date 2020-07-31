@@ -65,7 +65,6 @@ class RutrackerStreamProviderService {
     }
 
     retrieveTorrentInfoHash(magnetLink) {
-        //hash-info substring from magnet link
         //it also converts characters to lower case , because it does not work with upper case. 
         //TODO: figure out why it does not work with upper case
         return magnetLink.substring(20, 60).toLowerCase()  
