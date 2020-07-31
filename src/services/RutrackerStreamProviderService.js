@@ -2,8 +2,8 @@ const RutrackerApi = require("rutracker-api");
 
 const axios = require("axios").default
 
-const rutrackerUsername = process.env.RUTRACKER_USERNAME || "username";
-const rutrackerPassword = process.env.RUTRACKER_PASSWORD || "password";
+const rutrackerUsername = process.env.RUTRACKER_USERNAME || "username"
+const rutrackerPassword = process.env.RUTRACKER_PASSWORD || "password"
 
 //list of appropriate categories for tracks. 
 //It's required because tracks also could distribute music, images or whatever, but we need only films and series. 
@@ -31,7 +31,7 @@ class RutrackerStreamProviderService {
 
     constructor() {
         this.host = "https://v3-cinemeta.strem.io"
-        this.api = new RutrackerApi();
+        this.api = new RutrackerApi()
     }
 
     //TODO: refactore, error processing, logging!!!
@@ -39,8 +39,10 @@ class RutrackerStreamProviderService {
         return axios.get(`${this.host}/meta/movie/${id}.json`)
             .then(body => this.api.login({username: rutrackerUsername, password: rutrackerPassword})
                 .then(() => this.api.search({query: `${body.data.meta.name} ${body.data.meta.releaseInfo}`})
-                .then(torrents => this.mapValidTorrentsToTheirRutrackerId(torrents))
-                .then(torrentsIds => this.retrieveMagnetLinksByIds(torrentsIds)))
+                    .then(torrents => this.mapValidTorrentsToTheirRutrackerId(torrents))
+                    .then(torrentsIds => this.retrieveMagnetLinksByIds(torrentsIds))
+                )
+                .then(magnetLinks => magnetLinks.map(magnetLink => {return {infoHash: magnetLink}}))
             )   
     }
 
@@ -63,9 +65,12 @@ class RutrackerStreamProviderService {
     }
 
     retrieveTorrentInfoHash(magnetLink) {
-        return magnetLink.substring(20, 60) //hash-info substring from magnet link 
+        //hash-info substring from magnet link
+        //it also converts characters to lower case , because it does not work with upper case. 
+        //TODO: figure out why it does not work with upper case
+        return magnetLink.substring(20, 60).toLowerCase()  
     }
 
 }
 
-module.exports = RutrackerStreamProviderService;
+module.exports = RutrackerStreamProviderService

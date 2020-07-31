@@ -20,10 +20,10 @@ const builder = new addonBuilder({
 //TODO: test, CI/CD
 builder.defineStreamHandler(function(args) {
     if (args.type === 'movie') {
-        return rutrackerStreamProviderService.getStreamsById(args.id).then(res => {stream: res})
+        return rutrackerStreamProviderService.getStreamsById(args.id).then(res => {return {streams: res}})
     }
 
-    return Promise.resolve({stream: []})
+    return Promise.resolve({streams: []})
 })
 
 serveHTTP(builder.getInterface(), 8081)
