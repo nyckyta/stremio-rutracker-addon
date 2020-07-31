@@ -16,7 +16,8 @@ const builder = new addonBuilder({
     types: ['movie'],
     idPrefixes: ["tt"]
     
-});
+})
+
 //TODO: test, CI/CD
 builder.defineStreamHandler(function(args) {
     if (args.type === 'movie') {
