@@ -40,7 +40,7 @@ class RutrackerStreamProviderService {
             .then(body => this.api.login({username: rutrackerUsername, password: rutrackerPassword})
                 .then(() => this.api.search({query: `${body.data.meta.name} ${body.data.meta.releaseInfo}`})
                     .then(torrents => this.mapValidTorrentsToTheirRutrackerId(torrents))
-                    .then(torrentsIds => this.retrieveMagnetLinksByIds(torrentsIds))
+                    .then(torrentsIds => this.retrieveTorrentInfoHashByRutrackerIds(torrentsIds))
                 )
                 .then(magnetLinks => magnetLinks.map(magnetLink => {return {infoHash: magnetLink}}))
             )   
@@ -58,7 +58,7 @@ class RutrackerStreamProviderService {
     }
     
     /** ids - list of tracks id from rutracker */
-    retrieveMagnetLinksByIds(ids) {
+    retrieveTorrentInfoHashByRutrackerIds(ids) {
         return Promise.all(ids.map(trackId => this.api.getMagnetLink(trackId)
             .then(magnetLink => this.retrieveTorrentInfoHash(magnetLink))
         ))
