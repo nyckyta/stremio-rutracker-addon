@@ -25,5 +25,11 @@
     "axios": "^0.19.2",
     "rutracker-api": "^1.1.2",
     "stremio-addon-sdk": "^1.6.2"
+  },
+  "devDependencies": {
+    "jest": "^26.2.2"
+  },
+  "jest": {
+    "verbose": true
   }
 }
