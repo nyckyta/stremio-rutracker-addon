@@ -19,7 +19,7 @@ const builder = new addonBuilder({
 
 })
 
-// TODO: test, CI/CD
+// TODO:  CI/CD
 builder.defineStreamHandler(function (args) {
   if (args.type === 'movie') {
     return rutrackerStreamProviderService.getStreamsById(args.id).then(res => { return { streams: res } })
