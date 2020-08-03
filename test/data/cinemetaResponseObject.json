@@ -1,0 +1,57 @@
+{   
+    "data" : {
+        "meta": {
+            "awards": "Nominated for 4 Oscars. Another 21 wins & 15 nominations.",
+            "cast": [
+                "Diahnne Abbott",
+                    "Frank Adu",
+                    "Victor Argo",
+                    "Gino Ardito"
+                ],
+            "country": "USA",
+            "description": "A mentally unstable veteran works as a nighttime taxi driver in New York City, where the perceived decadence and sleaze fuels his urge for violent action by attempting to liberate a presidential campaign worker and an underage prostitute.",
+            "director": [
+                "Martin Scorsese"
+            ],
+            "dvdRelease": "1999-06-15T00:00:00.000Z",
+            "genre": [
+                "Crime",
+                "Drama"
+            ],
+            "imdbRating": "8.3",
+            "imdb_id": "tt0075314",
+            "name": "Taxi Driver",
+            "popularity": 3.2094333333333336,
+            "poster": "https://images.metahub.space/poster/small/tt0075314/img",
+            "released": "1976-02-09T00:00:00.000Z",
+            "runtime": "114 min",
+            "trailers": [
+                {
+                    "source": "UUxD4-dEzn0",
+                    "type": "Trailer"
+                }
+            ],
+            "type": "movie",
+            "writer": [
+                "Paul Schrader"
+            ],
+            "year": "1976",
+            "background": "https://images.metahub.space/background/medium/tt0075314/img",
+            "logo": "https://images.metahub.space/logo/medium/tt0075314/img",
+            "popularities": {
+                "moviedb": 29.083,
+                "stremio": 3.2094333333333336,
+                "trakt": 2,
+                "stremio_lib": 2.24
+            },
+            "slug": "movie/taxi-driver-0075314",
+            "id": "tt0075314",
+            "genres": [
+                "Crime",
+                "Drama"
+            ],
+            "releaseInfo": "1976",
+            "videos": []
+        }   
+    }
+} 

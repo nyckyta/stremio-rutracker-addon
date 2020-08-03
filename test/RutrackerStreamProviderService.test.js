@@ -1,5 +1,10 @@
 const fs = require("fs/promises")
+const axios = require("axios").default
 const RutrackerStreamProviderService = require("../src/services/RutrackerStreamProviderService")
+
+const testDataDir = `${__dirname}/data`
+
+jest.mock("axios")
 
 describe("Unit tests are related to RutrackerStreamProviderService", () => {
 
@@ -36,10 +41,10 @@ describe("Unit tests are related to RutrackerStreamProviderService", () => {
     })
     
     describe.each([
-        [`${__dirname}/data/validTorrent.json`, true],
-        [`${__dirname}/data/invalidTorrent1.json`, false],
-        [`${__dirname}/data/invalidTorrent2.json`, false],
-        [`${__dirname}/data/invalidTorrent3.json`, false]
+        [`${testDataDir}/validTorrent.json`, true],
+        [`${testDataDir}/invalidTorrent1.json`, false],
+        [`${testDataDir}/invalidTorrent2.json`, false],
+        [`${testDataDir}/invalidTorrent3.json`, false]
     ])("Unit tests are releated to #isTorrentValid method", (pathToTestData, expectedResult) => {
 
         test(`Returns true if torrent valid and false otherwise`, () =>  {
@@ -53,6 +58,7 @@ describe("Unit tests are related to RutrackerStreamProviderService", () => {
     })
 
     describe("Unit tests are related to #mapValidTorrentsToTheirRutrackerId", () => {
+        
         test(`Returns identifiers list of correct torrent entities`, () =>  {
             const rutrackerProvider = new RutrackerStreamProviderService()
 
@@ -70,6 +76,35 @@ describe("Unit tests are related to RutrackerStreamProviderService", () => {
             expect(actualResult.length).toBe(2)
             expect(actualResult[0]).toBe("1")
             expect(actualResult[1]).toBe("4")
+        })
+    })
+
+    describe("Unit tests are releated to #getStreamsById", () => {
+        
+        test("Returns streams list for a specific movie by IMDB id", () => {
+            const rutrackerProvider = new RutrackerStreamProviderService()
+             
+            axios.get.mockImplementationOnce(() => fs.readFile(`${testDataDir}/cinemetaResponseObject.json`).then(res => JSON.parse(res)))
+            const apiLoginApiMock = jest.fn().mockImplementation(() => Promise.resolve())
+            const searchApiMock = jest.fn().mockImplementation(() => Promise.resolve([{"id": "1"}, {"id": "2"}, {"id": "3"}]))
+            const mapValidTorrentsToTheirRutrackererIdMock = jest.fn().mockImplementation(() => Promise.resolve(["1", "2", "3"]))
+            const retrieveTorrentInfoHashByRutrackerIdsMock = jest.fn().mockImplementation(() => Promise.resolve(["hash1", "hash2", "hash3"]))
+
+            rutrackerProvider.api.login = apiLoginApiMock
+            rutrackerProvider.api.search = searchApiMock
+            rutrackerProvider.mapValidTorrentsToTheirRutrackerId = mapValidTorrentsToTheirRutrackererIdMock
+            rutrackerProvider.retrieveTorrentInfoHashByRutrackerIds = retrieveTorrentInfoHashByRutrackerIdsMock
+
+            return rutrackerProvider.getStreamsById("tt0075314").then(res => {
+                expect(axios.get.mock.calls.length).toBe(1)
+                expect(apiLoginApiMock.mock.calls.length).toBe(1)
+                expect(mapValidTorrentsToTheirRutrackererIdMock.mock.calls.length).toBe(1)
+                expect(retrieveTorrentInfoHashByRutrackerIdsMock.mock.calls.length).toBe(1)
+                expect(res.length).toBe(3)
+                expect(res[0].infoHash).toBe("hash1")
+                expect(res[1].infoHash).toBe("hash2")
+                expect(res[2].infoHash).toBe("hash3")
+            })
         })
     })
 })
