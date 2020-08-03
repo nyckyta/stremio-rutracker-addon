@@ -30,6 +30,8 @@
     "jest": "^26.2.2"
   },
   "jest": {
-    "verbose": true
+    "verbose": true,
+    "collectCoverage": true,
+    "testRegex": "(/test/.*|(\\.|/)(test|spec))\\.[jt]sx?$"
   }
 }
