@@ -5,7 +5,8 @@
   "main": "addon.js",
   "scripts": {
     "start": "node src/addon.js",
-    "test": "jest"
+    "test": "jest",
+    "lint": "npx eslint src test" 
   },
   "repository": {
     "type": "git",
