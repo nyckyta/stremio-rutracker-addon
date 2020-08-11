@@ -3,7 +3,7 @@ const RutrackerStreamProviderService = require('./services/RutrackerStreamProvid
 
 const rutrackerStreamProviderService = new RutrackerStreamProviderService()
 
-
+/* eslint new-cap: "off" -- There is a base dependency for our addon. Unfrotunately their code style is different. */
 const builder = new addonBuilder({
   id: 'io.strem.rutracker.addon',
   version: '0.0.1',
