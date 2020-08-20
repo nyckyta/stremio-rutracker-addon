@@ -37,7 +37,7 @@ class RutrackerStreamProviderService {
   getStreamsById (id) {
     return axios.get(`${this.host}/meta/movie/${id}.json`)
       .then(body => this.api.login({ username: rutrackerUsername, password: rutrackerPassword })
-        .then(() => this.api.search({ query: `${body.data.meta.name} ${body.data.meta.year}` })
+        .then(() => this.api.search({ query: `${body.data.meta.name} ${body.data.meta.year}` }) // search by name and year of the film
           .then(torrents => this.mapValidTorrentsToTheirRutrackerId(torrents))
           .then(torrentsIds => this.retrieveTorrentInfoHashByRutrackerIds(torrentsIds))
         )
