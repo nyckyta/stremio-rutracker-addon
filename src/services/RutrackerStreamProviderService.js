@@ -38,17 +38,27 @@ class RutrackerStreamProviderService {
     return axios.get(`${this.host}/meta/movie/${id}.json`)
       .then(body => this.api.login({ username: rutrackerUsername, password: rutrackerPassword })
         .then(() => this.api.search({ query: `${body.data.meta.name} ${body.data.meta.year}` }) // search by name and year of the film
-          .then(torrents => this.mapValidTorrentsToTheirRutrackerId(torrents))
-          .then(torrentsIds => this.retrieveTorrentInfoHashByRutrackerIds(torrentsIds))
+          .then(torrents => this.mapValidTorrentsToStreams(torrents))
         )
-        .then(infoHashes => infoHashes.map(torrentInfoHash => { return { infoHash: torrentInfoHash } }))
       )
   }
 
+  // TODO: layout issues regarding title
+  mapValidTorrentsToStreams (torrents) {
+    const validTorrents = this.mapValidTorrentsToMetaInfo(torrents)
+    return Promise.all(validTorrents.map(torrent => this.api.getMagnetLink(torrent.id)
+      .then(magnetLink => this.retrieveTorrentInfoHash(magnetLink))
+      .then(infoHash => { return { infoHash: infoHash, title: torrent.title } })
+    ))
+  }
+
   /** In this case the torrents parameter is a list of "Torrent" i.e. list of rutracker-api entity.
+   *  It maps API entity to simple object that contains title, category and ID of the rutracker torrent API entity.
         See https://github.com/nikityy/rutracker-api/blob/master/lib/torrent.js */
-  mapValidTorrentsToTheirRutrackerId (torrents) {
-    return torrents.filter(torrent => this.isTorrentValid(torrent)).map(torrent => torrent.id)
+  mapValidTorrentsToMetaInfo (torrents) {
+    return torrents.filter(torrent => this.isTorrentValid(torrent)).map(torrent => {
+      return { id: torrent.id, title: torrent.title, category: torrent.category }
+    })
   }
 
   /** torrent is valid only if his chekced state and torrent's category in list of valid categories */
