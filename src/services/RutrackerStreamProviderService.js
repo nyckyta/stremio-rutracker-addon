@@ -1,5 +1,5 @@
 const RutrackerApi = require('rutracker-api')
-
+const TorrentMetaInfo = require('../data/TorrentMetaInfo')
 const axios = require('axios').default
 
 const rutrackerUsername = process.env.RUTRACKER_USERNAME || 'username'
@@ -45,10 +45,10 @@ class RutrackerStreamProviderService {
 
   // TODO: layout issues regarding title
   mapValidTorrentsToStreams (torrents) {
-    const validTorrents = this.mapValidTorrentsToMetaInfo(torrents)
-    return Promise.all(validTorrents.map(torrent => this.api.getMagnetLink(torrent.id)
+    const metaInfoOfValidTorrents = this.mapValidTorrentsToMetaInfo(torrents)
+    return Promise.all(metaInfoOfValidTorrents.map(info => this.api.getMagnetLink(info.id)
       .then(magnetLink => this.retrieveTorrentInfoHash(magnetLink))
-      .then(infoHash => { return { infoHash: infoHash, title: torrent.title } })
+      .then(infoHash => { return { infoHash: infoHash, title: info.title } })
     ))
   }
 
@@ -57,7 +57,7 @@ class RutrackerStreamProviderService {
         See https://github.com/nikityy/rutracker-api/blob/master/lib/torrent.js */
   mapValidTorrentsToMetaInfo (torrents) {
     return torrents.filter(torrent => this.isTorrentValid(torrent)).map(torrent => {
-      return { id: torrent.id, title: torrent.title, category: torrent.category }
+      return new TorrentMetaInfo(torrent.id, torrent.title, torrent.category)
     })
   }
 
