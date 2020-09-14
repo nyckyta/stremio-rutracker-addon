@@ -1,6 +1,8 @@
 const fs = require('fs/promises')
 const axios = require('axios').default
 const RutrackerStreamProviderService = require('../src/services/RutrackerStreamProviderService')
+const TorrentMetaInfo = require('../src/data/TorrentMetaInfo')
+const Stream = require('../src/data/Stream')
 
 const testDataDir = `${__dirname}/data`
 
@@ -53,8 +55,8 @@ describe('Unit tests are related to RutrackerStreamProviderService', () => {
     })
   })
 
-  describe('Unit tests are related to #mapValidTorrentsToTheirRutrackerId', () => {
-    test('Returns identifiers list of correct torrent entities', () => {
+  describe('Unit tests are related to #mapValidTorrentsToMetaInfo', () => {
+    test('Returns list of meta entities for valid torrents', () => {
       const rutrackerProvider = new RutrackerStreamProviderService()
 
       const isTorrentValidMock = jest
@@ -66,11 +68,20 @@ describe('Unit tests are related to RutrackerStreamProviderService', () => {
 
       rutrackerProvider.isTorrentValid = isTorrentValidMock
 
-      const actualResult = rutrackerProvider.mapValidTorrentsToTheirRutrackerId([{ id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }])
+      const actualResult = rutrackerProvider.mapValidTorrentsToMetaInfo([
+        new TorrentMetaInfo('1', 'test1', 'testCategory1'),
+        new TorrentMetaInfo('2', 'test2', 'testCategory2'),
+        new TorrentMetaInfo('3', 'test3', 'testCategory3'),
+        new TorrentMetaInfo('4', 'test4', 'testCategory4')
+      ])
       expect(isTorrentValidMock.mock.calls).toHaveLength(4)
       expect(actualResult).toHaveLength(2)
-      expect(actualResult[0]).toBe('1')
-      expect(actualResult[1]).toBe('4')
+      expect(actualResult[0].id).toBe('1')
+      expect(actualResult[0].title).toBe('test1')
+      expect(actualResult[0].category).toBe('testCategory1')
+      expect(actualResult[1].id).toBe('4')
+      expect(actualResult[1].title).toBe('test4')
+      expect(actualResult[1].category).toBe('testCategory4')
     })
   })
 
@@ -81,23 +92,26 @@ describe('Unit tests are related to RutrackerStreamProviderService', () => {
       axios.get.mockImplementationOnce(() => fs.readFile(`${testDataDir}/cinemetaResponseObject.json`).then(res => JSON.parse(res)))
       const apiLoginApiMock = jest.fn().mockImplementation(() => Promise.resolve())
       const searchApiMock = jest.fn().mockImplementation(() => Promise.resolve([{ id: '1' }, { id: '2' }, { id: '3' }]))
-      const mapValidTorrentsToTheirRutrackererIdMock = jest.fn().mockImplementation(() => Promise.resolve(['1', '2', '3']))
-      const retrieveTorrentInfoHashByRutrackerIdsMock = jest.fn().mockImplementation(() => Promise.resolve(['hash1', 'hash2', 'hash3']))
+      const mapValidTorrentsToStreams = jest.fn().mockImplementation(() => [
+        new Stream('hash1', 'title1'),
+        new Stream('hash2', 'title2'),
+        new Stream('hash3', 'title3')
+      ])
 
       rutrackerProvider.api.login = apiLoginApiMock
       rutrackerProvider.api.search = searchApiMock
-      rutrackerProvider.mapValidTorrentsToTheirRutrackerId = mapValidTorrentsToTheirRutrackererIdMock
-      rutrackerProvider.retrieveTorrentInfoHashByRutrackerIds = retrieveTorrentInfoHashByRutrackerIdsMock
+      rutrackerProvider.mapValidTorrentsToStreams = mapValidTorrentsToStreams
 
       return rutrackerProvider.getStreamsById('tt0075314').then(res => {
         expect(axios.get.mock.calls).toHaveLength(1)
         expect(apiLoginApiMock.mock.calls).toHaveLength(1)
-        expect(mapValidTorrentsToTheirRutrackererIdMock.mock.calls).toHaveLength(1)
-        expect(retrieveTorrentInfoHashByRutrackerIdsMock.mock.calls).toHaveLength(1)
         expect(res).toHaveLength(3)
         expect(res[0].infoHash).toBe('hash1')
+        expect(res[0].title).toBe('title1')
         expect(res[1].infoHash).toBe('hash2')
+        expect(res[1].title).toBe('title2')
         expect(res[2].infoHash).toBe('hash3')
+        expect(res[2].title).toBe('title3')
       })
     })
   })
