@@ -1,5 +1,6 @@
 const RutrackerApi = require('rutracker-api')
 const TorrentMetaInfo = require('../data/TorrentMetaInfo')
+const Stream = require('../data/Stream')
 const axios = require('axios').default
 
 const rutrackerUsername = process.env.RUTRACKER_USERNAME || 'username'
@@ -48,7 +49,7 @@ class RutrackerStreamProviderService {
     const metaInfoOfValidTorrents = this.mapValidTorrentsToMetaInfo(torrents)
     return Promise.all(metaInfoOfValidTorrents.map(info => this.api.getMagnetLink(info.id)
       .then(magnetLink => this.retrieveTorrentInfoHash(magnetLink))
-      .then(infoHash => { return { infoHash: infoHash, title: info.title } })
+      .then(infoHash => new Stream(infoHash, info.title))
     ))
   }
 
